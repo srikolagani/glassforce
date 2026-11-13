@@ -625,7 +625,7 @@ final class AppSession {
         do {
             try await client.updateField(
                 org: org.id, instanceURL: org.instanceURL,
-                object: diff.object, id: diff.recordID, field: diff.field, value: diff.after
+                object: diff.object, id: diff.recordID, field: diff.field, value: diff.after, expectedBefore: diff.before
             )
             gfLog("Glassforce: updated %@ %@ on %@", diff.field, diff.recordID, org.label)
             // A successful server update must refresh the local search cache;
@@ -641,6 +641,10 @@ final class AppSession {
             }
         } catch {
             gfLog("Glassforce: write failed: %@", Self.plainWords(error))
+            if let conflict = error as? QueryError, conflict.status == 412 {
+                searchModel.pendingWrite.cancel()
+                await syncSilently(org.id)
+            }
             if directory.defaultOrg?.id == org.id {
                 searchModel.notice = "Couldn't update \(diff.recordTitle): \(Self.plainWords(error))"
             }

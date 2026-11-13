@@ -140,7 +140,7 @@ struct TokenManagerTests {
         }
         let tokens = TokenManager(transport: transport, store: store)
         await #expect(throws: AuthError.needsSignIn) {
-            _ = try await tokens.authorizedSend(orgKey, HTTPRequest(url: URL(string: "https://x.my.salesforce.com/q")!))
+            _ = try await tokens.authorizedSend(orgKey, HTTPRequest(url: URL(string: "https://acme.my.salesforce.com/services/data/q")!))
         }
         // initial refresh, call, refresh, retry: exactly one retry.
         #expect(transport.requests.count == 4)

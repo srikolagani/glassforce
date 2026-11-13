@@ -6,9 +6,10 @@ import GlassforceCore
 @Suite("Confirmed write app integration")
 @MainActor
 struct ConfirmedWriteIntegrationTests {
-    @Test func duplicateConfirmSendsOnceAndRefreshesTheCache() async throws {
+    @Test(arguments: [false, true]) func duplicateConfirmAndConflictRecovery(simulateConflict: Bool) async throws {
         let mock = MockSalesforce(baseURL: URL(string: "http://127.0.0.1:7777")!)
-        let tokens = TokenManager(transport: mock, store: InMemorySecretStore())
+        mock.rejectConditionalWrites = simulateConflict
+        let tokens = TokenManager(transport: mock, store: InMemorySecretStore(), allowsLoopback: true)
         let request = AuthorizationRequest(loginURL: mock.loginURL(for: .production), config: OAuthConfig(consumerKey: MockSalesforce.consumerKey))
         _ = try await mock.send(HTTPRequest(url: request.url))
         var approve = URLComponents(url: request.url, resolvingAgainstBaseURL: false)!
@@ -29,15 +30,23 @@ struct ConfirmedWriteIntegrationTests {
         var pending = PendingWrite()
         pending.setOrg(org.id)
         pending.stage(query: "move acme deal to closed won", records: FakeData.records)
+        model.pendingWrite = pending
         let write = try #require(pending.confirmed())
         let first = Task { await session.applyConfirmed(write) }
         let second = Task { await session.applyConfirmed(write) }
         await first.value
         await second.value
-        #expect(mock.patchBodies.count == 1)
+        #expect(mock.patchBodies.count == (simulateConflict ? 0 : 1))
+        #expect(mock.dataRequests.filter { $0.hasPrefix("PATCH ") }.count == 1)
         let patchIndex = try #require(mock.dataRequests.firstIndex(where: { $0.hasPrefix("PATCH ") }))
         #expect(mock.dataRequests.dropFirst(patchIndex + 1).contains { $0.hasPrefix("GET /query") },
                 "A successful write must refresh the local cache, not leave the old stage on screen")
-        #expect(model.notice?.hasPrefix("Updated ") == true)
+        if simulateConflict {
+            #expect(model.pendingWrite.confirmed() == nil)
+            #expect(model.notice?.contains("Refresh and confirm again") == true)
+            #expect(model.notice?.contains("Nothing was saved") == true)
+        } else {
+            #expect(model.notice?.hasPrefix("Updated ") == true)
+        }
     }
 }

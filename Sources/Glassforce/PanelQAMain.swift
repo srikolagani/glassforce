@@ -52,7 +52,7 @@ public enum PanelQAMain {
             model.orgBadge = OrgBadge(title: LocalhostFixtures.badge, color: Color.orange.opacity(0.75))
             let session = AppSession(
                 mode: .live,
-                tokens: TokenManager(transport: isolation.transport, store: isolation.secrets),
+                tokens: TokenManager(transport: isolation.transport, store: isolation.secrets, allowsLoopback: true),
                 local: LocalStore(directory: isolation.fileRoot),
                 mock: nil,
                 searchModel: model,

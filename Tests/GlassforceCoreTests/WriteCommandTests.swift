@@ -69,7 +69,7 @@ struct WriteCommandTests {
 
     @Test func mockPatchOnlyAfterConfirm() async throws {
         let mock = MockSalesforce(baseURL: URL(string: "http://127.0.0.1:7777")!)
-        let tokens = TokenManager(transport: mock, store: InMemorySecretStore())
+        let tokens = TokenManager(transport: mock, store: InMemorySecretStore(), allowsLoopback: true)
         let signIn = try await MockSalesforceTests().signIn(mock, tokens, env: .production)
         #expect(signIn.credentials.instanceURL.host == "127.0.0.1")
         let client = SalesforceClient(tokens: tokens)
@@ -87,14 +87,14 @@ struct WriteCommandTests {
             object: confirmed.diff.object,
             id: confirmed.diff.recordID,
             field: confirmed.diff.field,
-            value: confirmed.diff.after
+            value: confirmed.diff.after, expectedBefore: confirmed.before
         )
         #expect(mock.patchBodies == ["{\"StageName\":\"Closed Won\"}"])
         #expect(mock.dataRequests.contains { $0.hasPrefix("PATCH /sobjects/Opportunity/006ACME") })
         let readsBeforeReject = mock.dataRequests.count
         await #expect(throws: QueryError.self) {
             try await client.updateField(org: signIn.identity.key, instanceURL: signIn.credentials.instanceURL,
-                                         object: "Opportunity", id: "006ACME", field: "Stage Name", value: "Closed Won")
+                                         object: "Opportunity", id: "006ACME", field: "Stage Name", value: "Closed Won", expectedBefore: "Negotiation")
         }
         #expect(mock.dataRequests.count == readsBeforeReject)
         #expect(mock.patchBodies.count == 1)
@@ -105,7 +105,7 @@ struct WriteCommandTests {
         let renewal = Record(id: "006PLAT", kind: .opportunity, title: "Acme · Platform Renewal FY27", subtitle: "$240,000 · Negotiation", objectName: "Opportunity")
         let both = [uat, renewal]
         let mock = MockSalesforce(baseURL: URL(string: "http://127.0.0.1:7777")!)
-        let tokens = TokenManager(transport: mock, store: InMemorySecretStore())
+        let tokens = TokenManager(transport: mock, store: InMemorySecretStore(), allowsLoopback: true)
         let signIn = try await MockSalesforceTests().signIn(mock, tokens, env: .production)
         let client = SalesforceClient(tokens: tokens)
         var pending = PendingWrite()
@@ -153,7 +153,7 @@ struct WriteCommandTests {
             object: confirmed.diff.object,
             id: confirmed.recordID,
             field: confirmed.diff.field,
-            value: confirmed.diff.after
+            value: confirmed.diff.after, expectedBefore: confirmed.before
         )
         #expect(mock.patchBodies == ["{\"StageName\":\"Closed Won\"}"])
         #expect(mock.dataRequests.contains { $0.hasPrefix("PATCH /sobjects/Opportunity/006PLAT") })

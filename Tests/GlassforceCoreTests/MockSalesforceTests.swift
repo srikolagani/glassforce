@@ -48,7 +48,7 @@ struct MockSalesforceTests {
         let keychain = InMemorySecretStore()
 
         let mock = MockSalesforce(baseURL: URL(string: "http://127.0.0.1:7777")!, stateFile: stateFile)
-        let tokens = TokenManager(transport: mock, store: keychain)
+        let tokens = TokenManager(transport: mock, store: keychain, allowsLoopback: true)
         let result = try await signIn(mock, tokens, env: .sandbox)
         let client = SalesforceClient(tokens: tokens)
 
@@ -63,7 +63,7 @@ struct MockSalesforceTests {
 
         // "Relaunch": new server process (state from disk) and a new token manager, same keychain.
         let mock2 = MockSalesforce(baseURL: URL(string: "http://127.0.0.1:7777")!, stateFile: stateFile)
-        let tokens2 = TokenManager(transport: mock2, store: keychain)
+        let tokens2 = TokenManager(transport: mock2, store: keychain, allowsLoopback: true)
         let again = try await SalesforceClient(tokens: tokens2).syncIndex(org: result.identity.key, instanceURL: result.credentials.instanceURL) { _ in }.records
         #expect(again.count == records.count)
         #expect(await tokens2.refreshRequestCount == 1)
@@ -77,14 +77,14 @@ struct MockSalesforceTests {
         let redirect = try await mock.send(HTTPRequest(url: approve.url!))
         let code = try request.parseCallback(URL(string: redirect.headers["Location"]!)!).get()
         let forged = AuthorizationRequest(loginURL: request.loginURL, config: OAuthConfig(consumerKey: MockSalesforce.consumerKey), state: request.state)
-        let tokens = TokenManager(transport: mock, store: InMemorySecretStore())
+        let tokens = TokenManager(transport: mock, store: InMemorySecretStore(), allowsLoopback: true)
         await #expect(throws: AuthError.needsSignIn) { _ = try await tokens.completeSignIn(forged, code: code) }
     }
 
     @Test func rotatedOutTokenGetsInvalidGrant() async throws {
         let mock = MockSalesforce()
         let keychain = InMemorySecretStore()
-        let tokens = TokenManager(transport: mock, store: keychain)
+        let tokens = TokenManager(transport: mock, store: keychain, allowsLoopback: true)
         let result = try await signIn(mock, tokens, env: .production)
         let first = result.credentials.refreshToken
         _ = try await tokens.refresh(result.identity.key)
@@ -104,7 +104,7 @@ struct MockSalesforceTests {
 
     @Test func expiredSessionIsRefreshedTransparently() async throws {
         let mock = MockSalesforce()
-        let tokens = TokenManager(transport: mock, store: InMemorySecretStore())
+        let tokens = TokenManager(transport: mock, store: InMemorySecretStore(), allowsLoopback: true)
         let result = try await signIn(mock, tokens, env: .production)
         mock.expireAccessTokens()
         let facts = try await SalesforceClient(tokens: tokens).organization(org: result.identity.key, instanceURL: result.credentials.instanceURL)

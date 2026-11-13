@@ -14,7 +14,7 @@ struct SyncDiagnosticsTests {
 
     func run(viewAllData: Bool) async throws -> SyncDiagnostics.Report {
         let transport = StubTransport { request, _ in
-            if request.url.path.hasSuffix("/oauth2/token") { return tokenJSON(access: "AT1", refresh: nil) }
+            if request.url.path.hasSuffix("/oauth2/token") { return Self.ok(["access_token": "AT1", "instance_url": Self.instance.absoluteString, "id": "https://login.salesforce.com/id/00DORG000000001/005USER00000001"]) }
             if request.url.path.hasPrefix("/id/") { return Self.ok(["user_type": "STANDARD", "active": true]) }
             if request.url.path.hasSuffix("/describe") { return Self.ok(["queryable": true, "retrieveable": true]) }
             let q = URLComponents(url: request.url, resolvingAgainstBaseURL: false)?.queryItems?.first { $0.name == "q" }?.value ?? ""

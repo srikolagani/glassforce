@@ -146,7 +146,7 @@ public struct SalesforceClient: Sendable {
 
     /// One field update. Callers must pass a `ConfirmedWrite`; this method does not confirm.
     /// The id and field are identifiers only. Tests drive this through `MockSalesforce`.
-    public func updateField(org: String, instanceURL: URL, object: String, id: String, field: String, value: String) async throws {
+    public func updateField(org: String, instanceURL: URL, object: String, id: String, field: String, value: String, expectedBefore: String) async throws {
         guard SyncObject.isSafeName(object), SyncObject.isSafeName(field) else {
             throw QueryError(status: 400, errorCode: "INVALID_FIELD", message: "not a field Glassforce will write")
         }
@@ -154,13 +154,47 @@ public struct SalesforceClient: Sendable {
             throw QueryError(status: 400, errorCode: "INVALID_ID", message: "not a record id")
         }
         let url = instanceURL.appendingPathComponent("services/data/\(Self.apiVersion)/sobjects/\(object)/\(id)")
+        // Re-read the field the user confirmed, then let Salesforce enforce the
+        // version precondition atomically with the PATCH. Never retry a conflict
+        // without a new user confirmation. ETags are only supported for Accounts.
+        var readURL = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        readURL.queryItems = [URLQueryItem(name: "fields", value: "\(field),LastModifiedDate")]
+        let current = try await tokens.authorizedSend(org, HTTPRequest(url: readURL.url!, headers: ["Accept": "application/json"]))
+        guard current.status == 200 else { throw QueryError(status: current.status, body: current.body) }
+        guard let row = (try? JSONSerialization.jsonObject(with: current.body)) as? [String: Any],
+              row[field] as? String == expectedBefore else {
+            throw QueryError(status: 412, errorCode: "STALE_RECORD", message: "The current field differs from the change you confirmed. Refresh and confirm again. Nothing was saved.")
+        }
+        guard let modified = row["LastModifiedDate"] as? String,
+              let precondition = Self.unmodifiedSinceHeader(modified) else {
+            throw QueryError(status: 409, errorCode: "MISSING_RECORD_VERSION", message: "Cannot verify the record version. Nothing was saved.")
+        }
+        try Task.checkCancellation()
         let body = try JSONSerialization.data(withJSONObject: [field: value])
         let response = try await tokens.authorizedSend(org, HTTPRequest(
             method: "PATCH", url: url,
-            headers: ["Content-Type": "application/json", "Accept": "application/json"],
+            headers: ["Content-Type": "application/json", "Accept": "application/json", "If-Unmodified-Since": precondition],
             body: body
         ))
         guard (200..<300).contains(response.status) else { throw QueryError(status: response.status, body: response.body) }
+    }
+
+    /// HTTP dates have second precision. Round down, never forward: a conservative
+    /// conflict is preferable to authorizing a newer version than the one read.
+    static func unmodifiedSinceHeader(_ timestamp: String) -> String? {
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        var date = iso.date(from: timestamp)
+        if date == nil {
+            iso.formatOptions = [.withInternetDateTime]
+            date = iso.date(from: timestamp)
+        }
+        guard let date else { return nil }
+        let http = DateFormatter()
+        http.locale = Locale(identifier: "en_US_POSIX")
+        http.timeZone = TimeZone(secondsFromGMT: 0)
+        http.dateFormat = "EEE, dd MMM yyyy HH:mm:ss 'GMT'"
+        return http.string(from: Date(timeIntervalSince1970: floor(date.timeIntervalSince1970)))
     }
 
     // MARK: Query
@@ -235,6 +269,7 @@ public struct QueryError: LocalizedError, Equatable, Sendable {
     public var errorDescription: String? { plainWords }
 
     public var plainWords: String {
+        if status == 412 { return "This record changed in Salesforce. Refresh and confirm again. Nothing was saved." }
         let why: String
         switch errorCode {
         case "INSUFFICIENT_ACCESS", "INSUFFICIENT_ACCESS_OR_READONLY": why = "your user doesn't have access"

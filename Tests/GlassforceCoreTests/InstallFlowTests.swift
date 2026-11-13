@@ -64,7 +64,7 @@ struct InstallFlowTests {
     @Test func mockSimulatesInstallThenConsent() async throws {
         let mock = MockSalesforce(baseURL: URL(string: "http://127.0.0.1:7777")!)
         mock.requireInstall = true
-        let tokens = TokenManager(transport: mock, store: InMemorySecretStore())
+        let tokens = TokenManager(transport: mock, store: InMemorySecretStore(), allowsLoopback: true)
         let request = AuthorizationRequest(loginURL: mock.loginURL(for: .sandbox), config: OAuthConfig(consumerKey: MockSalesforce.consumerKey))
 
         let blocked = try await mock.send(HTTPRequest(url: request.url))

@@ -64,7 +64,7 @@
 </table>
 
 <p align="center">
-  <sub>Stage updates use the cached before-value, not server-side optimistic concurrency.<br />Another user's later change can be overwritten. Do not rely on this flow to detect server conflicts.</sub>
+  <sub>Stage updates re-read the confirmed field and use Salesforce’s time-based conditional update.<br />A conflict stops the update and requires a fresh confirmation. This is not an ETag-based version guarantee.</sub>
 </p>
 
 <details>
@@ -95,7 +95,7 @@ To move a window, drag the search icon in the command bar or the top edge of the
 - **Credentials stay separate.** Refresh tokens live in this device's macOS Keychain, not iCloud Keychain. Access tokens stay in memory. Tokens are not stored with records.
 - **Search runs on a local cache.** Synced record fields live in SQLite and JSON under `~/Library/Application Support/Glassforce`. This cache is **not application-encrypted** and may contain sensitive org data.
 - **No telemetry.** The app has no analytics, crash reporting, or third-party SDKs.
-- **Salesforce handles sign-in.** Glassforce does not collect your Salesforce password or MFA codes. Normal sign-in, sync, and update flows use Salesforce endpoints. The app trusts Salesforce token responses for instance and identity URLs; automatic HTTP redirects are refused.
+- **Salesforce handles sign-in.** Glassforce does not collect your Salesforce password or MFA codes. Normal sign-in, sync, and update flows use Salesforce endpoints. Credential-bearing requests are restricted to the selected org’s validated Salesforce instance and exact identity endpoint; automatic HTTP redirects are refused.
 
 <p align="center">
   <a href="ARCHITECTURE.md">How it works</a> · <a href="SECURITY.md">Security and reporting</a>

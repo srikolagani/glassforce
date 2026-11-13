@@ -30,6 +30,8 @@ public final class MockSalesforce: HTTPTransport, @unchecked Sendable {
 
     /// Simulate orgs where Glassforce's packaged app isn't installed until someone uses the install page.
     public var requireInstall = false
+    /// Simulates a concurrent edit after GET but before PATCH. Tests only.
+    public var rejectConditionalWrites = false
     /// Whether the person on the install page may install packages (false simulates a non-admin).
     public var installerIsAdmin = true
 
@@ -164,6 +166,10 @@ public final class MockSalesforce: HTTPTransport, @unchecked Sendable {
             let tail = Array(parts.dropFirst(5))
             locked { requestLog.append(([request.method, "/" + tail.joined(separator: "/")] + (q("q").map { [$0] } ?? [])).joined(separator: " ")) }
             if request.method == "PATCH", tail.count == 3, tail[0] == "sobjects" {
+                if rejectConditionalWrites { return (HTTPResponse(status: 412), 0) }
+                guard request.headers["If-Unmodified-Since"] == "Tue, 10 Nov 2026 12:00:00 GMT" else {
+                    return (json(412, [["errorCode": "PRECONDITION_FAILED", "message": "Record version changed"]]), 0)
+                }
                 let body = String(decoding: request.body ?? Data(), as: UTF8.self)
                 locked { patchLog.append(body) }
                 return (HTTPResponse(status: 204), 0)
@@ -181,6 +187,8 @@ public final class MockSalesforce: HTTPTransport, @unchecked Sendable {
                 return (nextPage(cursor: tail[1], slug: slug), queryDelay)
             case 1 where tail[0] == "sobjects":
                 return (json(200, ["encoding": "UTF-8", "maxBatchSize": 200, "sobjects": MockData.globalObjects]), queryDelay)
+            case 3 where tail[0] == "sobjects" && tail[1] == "Opportunity" && tail[2] != "describe":
+                return (json(200, ["Id": tail[2], "StageName": "Negotiation", "LastModifiedDate": "2026-11-10T12:00:00.000Z"]), 0)
             case 3 where tail[0] == "sobjects" && tail[2] == "describe":
                 let name = tail[1]
                 guard var describe = MockData.describe(name) else {

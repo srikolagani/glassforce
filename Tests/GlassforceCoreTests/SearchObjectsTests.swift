@@ -10,7 +10,7 @@ struct SearchObjectsTests {
     func connected(_ configure: (MockSalesforce) -> Void = { _ in }) async throws -> Org {
         let mock = MockSalesforce(baseURL: URL(string: "http://127.0.0.1:7777")!)
         configure(mock)
-        let tokens = TokenManager(transport: mock, store: InMemorySecretStore())
+        let tokens = TokenManager(transport: mock, store: InMemorySecretStore(), allowsLoopback: true)
         let signIn = try await MockSalesforceTests().signIn(mock, tokens, env: .production)
         return Org(mock: mock, client: SalesforceClient(tokens: tokens), key: signIn.identity.key, instance: signIn.credentials.instanceURL)
     }

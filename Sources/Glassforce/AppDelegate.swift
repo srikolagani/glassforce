@@ -304,7 +304,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 let guarded = GuardingTransport(inner: mock, policy: .loopbackOnly)
                 let session = AppSession(
                     mode: .mock,
-                    tokens: TokenManager(transport: guarded, store: secrets),
+                    tokens: TokenManager(transport: guarded, store: secrets, allowsLoopback: true),
                     local: LocalStore(directory: isolation.fileRoot),
                     mock: mock,
                     searchModel: model,

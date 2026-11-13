@@ -7,6 +7,9 @@ All notable changes to Glassforce are documented here. The format follows
 ## [Unreleased]
 
 ### Fixed
+- Test wrapper rejects multi-target false-green exits; secret scanning extends the default detection rules.
+- Bind bearer-token destinations to validated Salesforce org/user credentials; reject unexpected destinations and identity changes.
+- Re-read confirmed field values and require conditional Salesforce updates; stale records stop for fresh confirmation.
 - Search and onboarding windows explicitly activate on user input; dedicated drag handles avoid consuming form clicks.
 - Duplicate confirmations send one update, and a successful write refreshes the cache.
 - Release packaging requires a clean commit and writes generated casks only to build output.

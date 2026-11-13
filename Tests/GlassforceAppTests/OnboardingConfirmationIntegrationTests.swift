@@ -23,7 +23,7 @@ struct OnboardingConfirmationIntegrationTests {
     @Test func authenticatedClickCommitsOnceAndCompletesSync() async throws {
         let mock = MockSalesforce(baseURL: URL(string: "http://127.0.0.1:7777")!)
         let secrets = InMemorySecretStore()
-        let tokens = TokenManager(transport: mock, store: secrets)
+        let tokens = TokenManager(transport: mock, store: secrets, allowsLoopback: true)
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("glassforce-confirm-test-\(UUID())")
         defer { try? FileManager.default.removeItem(at: root) }
         let prefs = MemoryPreferenceStore(domain: ProcessIdentity.qaDomain)

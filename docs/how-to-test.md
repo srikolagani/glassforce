@@ -43,6 +43,6 @@ Use a dedicated test Mac account and an authorized Salesforce sandbox. Do not wi
 - Repeat show/hide, Escape, click-away, Cmd-K and Settings flows.
 - Setup: custom-domain input, Back, Cancel, retry, rejected org, repeated confirmation, and recovery after failed sync.
 - Install the package only with the org administrator's authorization; confirm OAuth identity and sync read-only first.
-- Any test update needs separate approval for the sandbox record and exact change. Verify both Salesforce and the refreshed cache. The app does not provide server-side optimistic concurrency protection.
+- Any test update needs separate approval for the sandbox record and exact change. Verify both Salesforce and the refreshed cache. Confirm that stale before-values and Salesforce HTTP 412 responses stop the write and require fresh confirmation. The app uses `If-Unmodified-Since`, a time-based precondition, not a strict ETag version guarantee.
 
 Record the commit, build metadata, checks performed, failures and untested cases. Do not describe a mock test as a live acceptance test.

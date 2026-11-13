@@ -53,7 +53,8 @@ public struct OrgIdentity: Sendable, Equatable {
     /// Parses `https://login.salesforce.com/id/<orgId>/<userId>`.
     public init?(idURL: URL) {
         let parts = idURL.path.split(separator: "/").map(String.init)
-        guard let idIndex = parts.lastIndex(of: "id"), parts.count >= idIndex + 3 else { return nil }
+        guard parts.count == 3, parts[0] == "id", idURL.query == nil, idURL.fragment == nil else { return nil }
+        let idIndex = 0
         orgID = parts[idIndex + 1]
         userID = parts[idIndex + 2]
     }

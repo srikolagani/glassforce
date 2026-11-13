@@ -7,7 +7,7 @@ import Testing
 @Suite("Sync report (per-object outcomes)")
 struct SyncReportTests {
     func syncedReport(_ mock: MockSalesforce) async throws -> SyncReport {
-        let tokens = TokenManager(transport: mock, store: InMemorySecretStore())
+        let tokens = TokenManager(transport: mock, store: InMemorySecretStore(), allowsLoopback: true)
         let signIn = try await MockSalesforceTests().signIn(mock, tokens, env: .production)
         return try await SalesforceClient(tokens: tokens).syncIndex(org: signIn.identity.key, instanceURL: signIn.credentials.instanceURL) { _ in }
     }
@@ -64,7 +64,7 @@ struct SyncReportTests {
         let mock = MockSalesforce(baseURL: URL(string: "http://127.0.0.1:7777")!)
         let store = RefusingSecretStore()
         // Fresh process: no access token in memory, so the first query needs the saved sign-in.
-        let tokens = TokenManager(transport: mock, store: store)
+        let tokens = TokenManager(transport: mock, store: store, allowsLoopback: true)
         await #expect(throws: RefusingSecretStore.Refused.self) {
             _ = try await SalesforceClient(tokens: tokens).syncIndex(org: "00Dorg:005user", instanceURL: URL(string: "https://acme.my.salesforce.com")!) { _ in }
         }

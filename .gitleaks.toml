@@ -3,6 +3,9 @@
 # (PKCE; no client secret exists). Allow it so gitleaks doesn't treat it as a leak.
 title = "Glassforce"
 
+[extend]
+useDefault = true
+
 [allowlist]
 description = "Public OAuth client id shipped in PackagedApp (PKCE, no secret)"
 paths = [

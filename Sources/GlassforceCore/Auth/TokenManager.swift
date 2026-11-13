@@ -13,12 +13,15 @@ public actor TokenManager {
 
     private let transport: HTTPTransport
     private let store: SecretStore
+    private var pendingCredentials: [String: OrgCredentials] = [:]
+    private let allowsLoopback: Bool
     private var accessTokens: [String: String] = [:]
     private var inFlight: [String: Task<String, Error>] = [:]
     /// Number of refresh requests actually sent (tests use it to prove de-duplication).
     public private(set) var refreshRequestCount = 0
 
-    public init(transport: HTTPTransport, store: SecretStore) {
+    public init(transport: HTTPTransport, store: SecretStore, allowsLoopback: Bool = false) {
+        self.allowsLoopback = allowsLoopback
         self.transport = transport
         self.store = store
     }
@@ -29,6 +32,7 @@ public actor TokenManager {
     /// calls can run, but does **not** write the refresh token to the SecretStore. Call `commit`
     /// after the user confirms the org, or `discard` if they pick a different one.
     public func exchangeSignIn(_ request: AuthorizationRequest, code: String) async throws -> SignIn {
+        try CredentialDestination.validateBase(request.loginURL, allowsLoopback: allowsLoopback)
         let tokenURL = request.loginURL.appendingPathComponent("services/oauth2/token")
         let response = try await send(.form(tokenURL, [
             ("grant_type", "authorization_code"),
@@ -45,6 +49,8 @@ public actor TokenManager {
             refreshToken: refresh, consumerKey: request.consumerKey,
             loginURL: request.loginURL, instanceURL: token.instanceURL, idURL: token.id
         )
+        try CredentialDestination.validate(credentials, org: identity.key, allowsLoopback: allowsLoopback)
+        pendingCredentials[identity.key] = credentials
         // Memory only — Keychain write waits for confirm.
         accessTokens[identity.key] = token.accessToken
         return SignIn(identity: identity, credentials: credentials, accessToken: token.accessToken)
@@ -52,13 +58,16 @@ public actor TokenManager {
 
     /// Persists the refresh token after the user confirms this org.
     public func commit(_ signIn: SignIn) throws {
+        try CredentialDestination.validate(signIn.credentials, org: signIn.identity.key, allowsLoopback: allowsLoopback)
         try save(signIn.credentials, for: signIn.identity.key)
+        pendingCredentials[signIn.identity.key] = nil
         accessTokens[signIn.identity.key] = signIn.accessToken
     }
 
     /// Drops an unconfirmed sign-in from memory. Never wrote to the SecretStore.
     public func discard(_ signIn: SignIn) {
         accessTokens[signIn.identity.key] = nil
+        pendingCredentials[signIn.identity.key] = nil
     }
 
     /// Exchange + commit. Kept for tests and callers that don't need a confirmation step.
@@ -72,7 +81,9 @@ public actor TokenManager {
 
     public func credentials(for org: String) throws -> OrgCredentials? {
         guard let data = try store.read(account: org) else { return nil }
-        return try JSONDecoder().decode(OrgCredentials.self, from: data)
+        let credentials = try JSONDecoder().decode(OrgCredentials.self, from: data)
+        try CredentialDestination.validate(credentials, org: org, allowsLoopback: allowsLoopback)
+        return credentials
     }
 
     public func hasCredentials(for org: String) -> Bool {
@@ -107,8 +118,14 @@ public actor TokenManager {
 
         do {
             let token = try Self.decodeToken(response)
+            guard OrgIdentity(idURL: token.id)?.key == org else { throw AuthError.server("Refresh identity does not match the selected org") }
+            var updated = credentials
+            updated.instanceURL = token.instanceURL
+            updated.idURL = token.id
+            try CredentialDestination.validate(updated, org: org, allowsLoopback: allowsLoopback)
             if let rotated = token.refreshToken { credentials.refreshToken = rotated }
             credentials.instanceURL = token.instanceURL
+            credentials.idURL = token.id
             // RTR: persist the new refresh token BEFORE handing out the new access token.
             try save(credentials, for: org)
             accessTokens[org] = token.accessToken
@@ -125,13 +142,16 @@ public actor TokenManager {
 
     /// Sends an API request with a bearer token. On 401 it refreshes once and retries once.
     public func authorizedSend(_ org: String, _ request: HTTPRequest) async throws -> HTTPResponse {
+        try validateDestination(org, request.url)
         var attempt = request
         attempt.headers["Authorization"] = "Bearer \(try await accessToken(for: org))"
+        try validateDestination(org, attempt.url)
         let first = try await send(attempt)
         guard first.status == 401 else { return first }
 
         accessTokens[org] = nil
         attempt.headers["Authorization"] = "Bearer \(try await refresh(org))"
+        try validateDestination(org, attempt.url)
         let second = try await send(attempt)
         if second.status == 401 { throw AuthError.needsSignIn }
         return second
@@ -147,10 +167,16 @@ public actor TokenManager {
             ]))
         }
         accessTokens[org] = nil
+        pendingCredentials[org] = nil
         try? store.delete(account: org)
     }
 
     // MARK: Helpers
+
+    private func validateDestination(_ org: String, _ url: URL) throws {
+        guard let credentials = try pendingCredentials[org] ?? credentials(for: org) else { throw AuthError.needsSignIn }
+        try CredentialDestination.authorize(url, credentials: credentials, allowsLoopback: allowsLoopback)
+    }
 
     private func save(_ credentials: OrgCredentials, for org: String) throws {
         try store.write(try JSONEncoder().encode(credentials), account: org)
