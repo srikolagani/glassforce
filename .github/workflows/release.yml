@@ -34,9 +34,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${{ steps.meta.outputs.tag }}"
-          NOTES="Install with Homebrew:\n\`\`\`sh\nbrew tap srikolagani/tap https://github.com/srikolagani/glassforce-public.git\nbrew install --cask srikolagani/tap/glassforce\n\`\`\`\n\nOr download the DMG directly: [Glassforce-0.1.0.dmg](https://srikolagani.github.io/glassforce-public/releases/Glassforce-0.1.0.dmg)"
+          VERSION="$(tr -d '[:space:]' < VERSION)"
+          DMG_NAME="Glassforce-${VERSION}.dmg"
+          DMG_URL="https://srikolagani.github.io/glassforce-public/releases/${DMG_NAME}"
+          NOTES="Install with Homebrew:\n\`\`\`sh\nbrew tap srikolagani/tap https://github.com/srikolagani/glassforce-public.git\nbrew install --cask srikolagani/tap/glassforce\n\`\`\`\n\nOr download the DMG directly: [${DMG_NAME}](${DMG_URL})"
           if ! gh release view "$TAG" >/dev/null 2>&1; then
             gh release create "$TAG" --title "Glassforce ${TAG}" --notes "$(printf "$NOTES")"
           else
             gh release edit "$TAG" --title "Glassforce ${TAG}" --notes "$(printf "$NOTES")"
+          fi
+          if curl -fsSL "$DMG_URL" -o "$DMG_NAME"; then
+            gh release upload "$TAG" "$DMG_NAME" --clobber
           fi

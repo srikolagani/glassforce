@@ -211,6 +211,7 @@ Candidate builds are **ad-hoc signed** unless built with a Developer ID certific
 
 ```sh
 brew tap srikolagani/tap https://github.com/srikolagani/glassforce-public.git
+brew trust srikolagani/tap # if using Homebrew 7+
 brew install --cask srikolagani/tap/glassforce
 ```
 
