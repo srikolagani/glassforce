@@ -29,7 +29,7 @@ No release is tagged yet. No version is supported.
 
 Public GitHub issues are the wrong place for a security report.
 
-Use the private reporting option on the [Security tab](https://github.com/srikolagani/glassforce-public/security) when available. If it is unavailable, ask the maintainer for a private reporting channel without posting exploit details or org data publicly.
+Use the private reporting option on the [Security tab](https://github.com/srikolagani/glassforce/security) when available. If it is unavailable, ask the maintainer for a private reporting channel without posting exploit details or org data publicly.
 
 A report includes steps to reproduce, the version that was running, and the impact.
 

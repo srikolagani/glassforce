@@ -6,7 +6,7 @@ Historical launch draft. Not a current feature or installation statement. Check 
 
 This file is an unpublished draft. Do not post it from this pull request.
 
-The separate sanitized public-source repository is https://github.com/srikolagani/glassforce-public. Do not make the original private repository or its history public.
+The separate sanitized public-source repository is https://github.com/srikolagani/glassforce. Do not make the original private repository or its history public.
 
 Put the title in the Hacker News title field. The Show HN prefix uses a colon because that is the title format on the site. Paste the paragraphs under Post into the text field. Do not paste this note.
 
@@ -36,4 +36,4 @@ Sign-in is OAuth with PKCE. Tokens stay in the Keychain. There is no telemetry. 
 
 The license is MIT.
 
-https://github.com/srikolagani/glassforce-public
+https://github.com/srikolagani/glassforce

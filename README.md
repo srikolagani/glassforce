@@ -1,8 +1,8 @@
 <p align="center">
-  <a href="https://srikolagani.github.io/glassforce-public/#gh-dark-mode-only">
+  <a href="https://srikolagani.github.io/glassforce/#gh-dark-mode-only">
     <img src="docs/brand/glassforce-hero.png" alt="Glassforce. Your org, one keystroke away." width="100%" />
   </a>
-  <a href="https://srikolagani.github.io/glassforce-public/#gh-light-mode-only">
+  <a href="https://srikolagani.github.io/glassforce/#gh-light-mode-only">
     <img src="docs/brand/glassforce-hero.png" alt="Glassforce. Your org, one keystroke away." width="100%" />
   </a>
 </p>
@@ -17,15 +17,15 @@
   <tr>
     <td align="center">
       <strong>Install with Homebrew</strong><br />
-      <code>brew tap srikolagani/tap https://github.com/srikolagani/glassforce-public.git &amp;&amp; brew install --cask srikolagani/tap/glassforce</code>
+      <code>brew tap srikolagani/tap https://github.com/srikolagani/glassforce.git &amp;&amp; brew install --cask srikolagani/tap/glassforce</code>
     </td>
   </tr>
 </table>
 
 <p align="center">
-  <a href="https://github.com/srikolagani/glassforce-public/releases/download/v0.1.0/Glassforce-0.1.0.dmg"><strong>Download for Mac (DMG) ↗</strong></a> &nbsp; · &nbsp;
+  <a href="https://github.com/srikolagani/glassforce/releases/download/v0.1.0/Glassforce-0.1.0.dmg"><strong>Download for Mac (DMG) ↗</strong></a> &nbsp; · &nbsp;
   <a href="#install-status"><strong>Install with Homebrew</strong></a> &nbsp; · &nbsp;
-  <a href="https://srikolagani.github.io/glassforce-public/">Visit the website</a> &nbsp; · &nbsp;
+  <a href="https://srikolagani.github.io/glassforce/">Visit the website</a> &nbsp; · &nbsp;
   <a href="ARCHITECTURE.md">Read the architecture</a>
 </p>
 
@@ -34,8 +34,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/srikolagani/glassforce-public/releases/latest"><img src="https://img.shields.io/github/v/release/srikolagani/glassforce-public?style=flat-square&amp;labelColor=070B2E&amp;color=3D63F5&amp;label=release" alt="Latest release" /></a>
-  <a href="https://github.com/srikolagani/glassforce-public"><img src="https://img.shields.io/github/stars/srikolagani/glassforce-public?style=flat-square&amp;labelColor=070B2E&amp;color=3D63F5&amp;logo=github" alt="GitHub stars" /></a>
+  <a href="https://github.com/srikolagani/glassforce/releases/latest"><img src="https://img.shields.io/github/v/release/srikolagani/glassforce?style=flat-square&amp;labelColor=070B2E&amp;color=3D63F5&amp;label=release" alt="Latest release" /></a>
+  <a href="https://github.com/srikolagani/glassforce"><img src="https://img.shields.io/github/stars/srikolagani/glassforce?style=flat-square&amp;labelColor=070B2E&amp;color=3D63F5&amp;logo=github" alt="GitHub stars" /></a>
   <img src="https://img.shields.io/badge/macOS-26-3D63F5?style=flat-square&amp;labelColor=070B2E" alt="Requires macOS 26" />
   <img src="https://img.shields.io/badge/Swift-6.2-3D63F5?style=flat-square&amp;labelColor=070B2E" alt="Swift 6.2" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-3D63F5?style=flat-square&amp;labelColor=070B2E" alt="MIT license" /></a>
@@ -210,7 +210,7 @@ Candidate builds are **ad-hoc signed** unless built with a Developer ID certific
 </p>
 
 ```sh
-brew tap srikolagani/tap https://github.com/srikolagani/glassforce-public.git
+brew tap srikolagani/tap https://github.com/srikolagani/glassforce.git
 brew trust srikolagani/tap # if using Homebrew 7+
 brew install --cask srikolagani/tap/glassforce
 ```
@@ -224,8 +224,8 @@ Candidate builds are **ad-hoc signed** unless a Developer ID signature and notar
 Build locally on **macOS 26** with **Xcode 26** or the **Swift 6.2 Command Line Tools**:
 
 ```sh
-git clone https://github.com/srikolagani/glassforce-public.git
-cd glassforce-public
+git clone https://github.com/srikolagani/glassforce.git
+cd glassforce
 GLASSFORCE_SIGN_IDENTITY=- scripts/build-app.sh release
 open build/Glassforce.app
 ```
@@ -299,7 +299,7 @@ See the [release-candidate test guide](docs/how-to-test.md) for automated checks
 </p>
 
 <p align="center">
-  <a href="https://github.com/srikolagani/glassforce-public/issues/new/choose">Report a bug</a> ·
+  <a href="https://github.com/srikolagani/glassforce/issues/new/choose">Report a bug</a> ·
   <a href="SECURITY.md">Report a vulnerability</a> ·
   <a href="CODE_OF_CONDUCT.md">Code of conduct</a>
 </p>

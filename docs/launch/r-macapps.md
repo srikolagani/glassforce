@@ -6,7 +6,7 @@ Historical launch draft. Not a current feature or installation statement. Check 
 
 This file is an unpublished draft. Do not post it from this pull request.
 
-The separate sanitized public-source repository is https://github.com/srikolagani/glassforce-public. Do not make the original private repository or its history public.
+The separate sanitized public-source repository is https://github.com/srikolagani/glassforce. Do not make the original private repository or its history public.
 
 Read the r/MacApps sidebar before you post. This note does not quote it, because the rules change. A signed DMG and `brew install --cask glassforce` are coming soon, so the post tells readers to build from source. Check whether a post about building from source fits this subreddit before you submit.
 
@@ -38,4 +38,4 @@ Sign-in is OAuth with PKCE. Tokens stay in the Keychain. There is no telemetry. 
 
 Cmd-K actions are coming soon. So are inline preview, natural language writes that you confirm before they run, a signed DMG, and `brew install --cask glassforce`. I have not published a public Salesforce package install link.
 
-https://github.com/srikolagani/glassforce-public
+https://github.com/srikolagani/glassforce

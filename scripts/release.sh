@@ -90,7 +90,7 @@ hdiutil create -volname "$APP_NAME" -srcfolder "$STAGE" \
 SHA="$(shasum -a 256 "$DIST/$DMG_NAME" | awk '{print $1}')"
 echo "    sha256 $SHA"
 
-RELEASE_URL="https://github.com/srikolagani/glassforce-public/releases/download/v${VERSION}/${DMG_NAME}"
+RELEASE_URL="https://github.com/srikolagani/glassforce/releases/download/v${VERSION}/${DMG_NAME}"
 LOCAL_URL="file://$(cd "$DIST" && pwd)/${DMG_NAME}"
 export VERSION SHA RELEASE_URL LOCAL_URL SOURCE_SHA SIGNING_STATUS NOTARY_STATUS
 python3 - <<'PY'
@@ -115,7 +115,7 @@ cask "glassforce" do
   url "{url}"
   name "Glassforce"
   desc "Native macOS command bar for Salesforce"
-  homepage "https://github.com/srikolagani/glassforce-public"
+  homepage "https://github.com/srikolagani/glassforce"
 
   depends_on macos: :tahoe
 

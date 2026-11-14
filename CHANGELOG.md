@@ -43,5 +43,5 @@ Milestone 1: the command bar skeleton.
 - swift-testing suites for the record store, search, selection and launch options.
 - CI on GitHub Actions (macOS 26 runner), security policy, contributing guide, issue and PR templates.
 
-[Unreleased]: https://github.com/srikolagani/glassforce-public/commits/main
+[Unreleased]: https://github.com/srikolagani/glassforce/commits/main
 [0.1.0]: #010---2026-11-03

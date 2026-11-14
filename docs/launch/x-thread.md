@@ -6,7 +6,7 @@ Historical launch draft. Not a current feature or installation statement. Check 
 
 This file is an unpublished draft. Do not post it from this pull request.
 
-The separate sanitized public-source repository is https://github.com/srikolagani/glassforce-public. Do not make the original private repository or its history public.
+The separate sanitized public-source repository is https://github.com/srikolagani/glassforce. Do not make the original private repository or its history public.
 
 Paste each post as its own post, in order. Leave the headings in this file. Do not ask for likes, reposts, or follows. The last post has #Salesforce and #macOS. Do not add more tags.
 
@@ -42,4 +42,4 @@ Cmd-K actions, inline preview, natural language writes that you confirm before t
 
 ## Post 7
 
-https://github.com/srikolagani/glassforce-public #Salesforce #macOS
+https://github.com/srikolagani/glassforce #Salesforce #macOS

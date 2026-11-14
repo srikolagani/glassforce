@@ -11,8 +11,8 @@ You need macOS 26. You also need Xcode 26 or the Swift 6.2 command line tools.
 Run these commands in order.
 
 ```sh
-git clone https://github.com/srikolagani/glassforce-public.git
-cd glassforce-public
+git clone https://github.com/srikolagani/glassforce.git
+cd glassforce
 swift build
 scripts/test.sh
 GLASSFORCE_SIGN_IDENTITY=- scripts/build-app.sh

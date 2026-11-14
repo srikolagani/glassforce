@@ -10,10 +10,10 @@ cask "glassforce" do
   version "0.1.0"
   sha256 "GENERATED_BY_SCRIPTS_RELEASE_SH"
 
-  url "https://github.com/srikolagani/glassforce-public/releases/download/v0.1.0/Glassforce-0.1.0.dmg"
+  url "https://github.com/srikolagani/glassforce/releases/download/v0.1.0/Glassforce-0.1.0.dmg"
   name "Glassforce"
   desc "Native macOS command bar for Salesforce"
-  homepage "https://github.com/srikolagani/glassforce-public"
+  homepage "https://github.com/srikolagani/glassforce"
 
   depends_on macos: :tahoe
 
