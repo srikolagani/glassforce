@@ -17,13 +17,13 @@
   <tr>
     <td align="center">
       <strong>Install with Homebrew</strong><br />
-      <code>brew install --cask srikolagani/tap/glassforce</code>
+      <code>brew tap srikolagani/tap https://github.com/srikolagani/glassforce-public.git &amp;&amp; brew install --cask srikolagani/tap/glassforce</code>
     </td>
   </tr>
 </table>
 
 <p align="center">
-  <a href="https://github.com/srikolagani/glassforce-public/releases/latest"><strong>Download for Mac ↗</strong></a> &nbsp; · &nbsp;
+  <a href="https://srikolagani.github.io/glassforce-public/releases/Glassforce-0.1.0.dmg"><strong>Download for Mac (DMG) ↗</strong></a> &nbsp; · &nbsp;
   <a href="#install-status"><strong>Install with Homebrew</strong></a> &nbsp; · &nbsp;
   <a href="https://srikolagani.github.io/glassforce-public/">Visit the website</a> &nbsp; · &nbsp;
   <a href="ARCHITECTURE.md">Read the architecture</a>
@@ -210,7 +210,7 @@ Candidate builds are **ad-hoc signed** unless built with a Developer ID certific
 </p>
 
 ```sh
-brew tap srikolagani/tap
+brew tap srikolagani/tap https://github.com/srikolagani/glassforce-public.git
 brew install --cask srikolagani/tap/glassforce
 ```
 

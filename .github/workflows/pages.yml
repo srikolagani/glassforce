@@ -27,14 +27,23 @@ jobs:
       - name: Publish site to gh-pages
         run: |
           TMP_DIR="$(mktemp -d)"
-          cp -R site/. "$TMP_DIR/"
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            git fetch origin gh-pages
+            git worktree add "$TMP_DIR" origin/gh-pages
+            cd "$TMP_DIR"
+            git checkout -B gh-pages
+          else
+            cd "$TMP_DIR"
+            git init -b gh-pages
+          fi
+          cp -R "$GITHUB_WORKSPACE/site/." "$TMP_DIR/"
           touch "$TMP_DIR/.nojekyll"
-          cd "$TMP_DIR"
-          git init -b gh-pages
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "Deploy site from ${GITHUB_SHA}"
-          git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages:gh-pages
+          if ! git diff --cached --quiet; then
+            git commit -m "Deploy site from ${GITHUB_SHA}"
+            git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages:gh-pages
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

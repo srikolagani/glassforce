@@ -81,17 +81,17 @@
             <span class="soon"><span class="pulse-dot" aria-hidden="true"></span>Homebrew Installation</span>
             <span class="install-tag">macOS 26 Tahoe · Apple Silicon &amp; Intel</span>
           </div>
-          <p class="install-lead">Install from the personal Homebrew tap in one command:</p>
+          <p class="install-lead">Install Glassforce on your Mac with Homebrew:</p>
           <div class="command-box">
-            <pre class="command"><code id="brew-cmd">brew install --cask srikolagani/tap/glassforce</code></pre>
+            <pre class="command"><code id="brew-cmd">brew tap srikolagani/tap https://github.com/srikolagani/glassforce-public.git &amp;&amp; brew install --cask srikolagani/tap/glassforce</code></pre>
             <button type="button" class="copy-button" data-copy-target="brew-cmd" aria-label="Copy Homebrew install command">
               <span class="copy-label">Copy</span>
             </button>
           </div>
-          <p class="note">Or after <code>brew tap srikolagani/tap</code>, run <code>brew install --cask glassforce</code>.</p>
+          <p class="note">Or after tapping, run <code>brew install --cask glassforce</code> · <a href="releases/Glassforce-0.1.0.dmg">Direct DMG download (v0.1.0)</a></p>
           <div class="install-actions">
-            <a class="button" href="https://github.com/srikolagani/glassforce-public#install-status">Build from source</a>
-            <a class="button button-ghost" href="https://github.com/srikolagani/glassforce-public/releases">View releases</a>
+            <a class="button" href="releases/Glassforce-0.1.0.dmg">Download DMG (v0.1.0)</a>
+            <a class="button button-ghost" href="https://github.com/srikolagani/glassforce-public#install-status">Build from source</a>
           </div>
         </div>
       </div>
@@ -159,11 +159,11 @@
     <div class="band wrap status">
       <section class="glass live" aria-labelledby="live-title">
         <h2 id="live-title">Live today</h2>
-        <p>The hotkey panel, fuzzy search, record preview, Cmd-K actions, confirmed stage changes, object picker, and OAuth connection are in the source candidate.</p>
+        <p>The hotkey panel, fuzzy search, record preview, Cmd-K actions, confirmed stage changes, object picker, OAuth connection, DMG installer, and personal Homebrew tap are available today.</p>
       </section>
       <section class="later" aria-labelledby="later-title">
-        <h2 id="later-title">Coming later</h2>
-        <p>A verified public download and Homebrew tap are not available yet. Candidate builds are ad-hoc signed, not Developer ID signed or notarized.</p>
+        <h2 id="later-title">Code signing note</h2>
+        <p>Current candidate builds are ad-hoc signed, not Developer ID signed or notarized. On first launch, approve Glassforce in System Settings → Privacy &amp; Security → Open Anyway.</p>
       </section>
     </div>
   </main>

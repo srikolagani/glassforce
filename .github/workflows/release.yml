@@ -34,6 +34,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${{ steps.meta.outputs.tag }}"
+          NOTES="Install with Homebrew:\n\`\`\`sh\nbrew tap srikolagani/tap https://github.com/srikolagani/glassforce-public.git\nbrew install --cask srikolagani/tap/glassforce\n\`\`\`\n\nOr download the DMG directly: [Glassforce-0.1.0.dmg](https://srikolagani.github.io/glassforce-public/releases/Glassforce-0.1.0.dmg)"
           if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --title "Glassforce ${TAG}" --generate-notes
+            gh release create "$TAG" --title "Glassforce ${TAG}" --notes "$(printf "$NOTES")"
+          else
+            gh release edit "$TAG" --title "Glassforce ${TAG}" --notes "$(printf "$NOTES")"
           fi
