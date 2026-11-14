@@ -136,4 +136,23 @@
 
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   selectHero(HERO_MEDIA, reduceMotion).then(showHero);
+
+  var copyButtons = document.querySelectorAll("[data-copy-target]");
+  copyButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var targetId = btn.getAttribute("data-copy-target");
+      var target = targetId ? document.getElementById(targetId) : null;
+      var text = target ? target.textContent.trim() : "";
+      if (!text || !navigator.clipboard) return;
+      navigator.clipboard.writeText(text).then(function () {
+        var label = btn.querySelector(".copy-label");
+        if (!label) return;
+        var prev = label.textContent;
+        label.textContent = "Copied!";
+        setTimeout(function () {
+          label.textContent = prev;
+        }, 1800);
+      });
+    });
+  });
 })();

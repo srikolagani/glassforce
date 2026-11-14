@@ -293,46 +293,106 @@ kbd {
 .install-card {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  width: min(680px, 100%);
-  margin: 18px auto 0;
-  padding: 14px 14px 14px 18px;
-  text-align: left;
+  justify-content: center;
+  gap: 14px;
+  width: min(740px, 100%);
+  margin: 26px auto 12px;
+  padding: 28px 28px 24px;
+  text-align: center;
+  border: 1.5px solid rgba(61, 99, 245, 0.45);
+  box-shadow:
+    0 24px 64px var(--shadow-color),
+    0 0 0 4px rgba(61, 99, 245, 0.12),
+    0 0 48px rgba(61, 99, 245, 0.22),
+    inset 0 1px 0 var(--line);
 }
 
-.install-copy {
-  min-width: 0;
+.install-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pulse-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  vertical-align: middle;
+}
+
+.install-tag {
+  font-size: 0.85rem;
+  color: var(--faint);
+  font-weight: 500;
+}
+
+.install-lead {
+  margin: 2px 0 0;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--ink);
 }
 
 .soon {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   margin: 0;
-  padding: 3px 10px;
+  padding: 5px 13px;
   border-radius: 999px;
-  background: rgba(61, 99, 245, 0.14);
+  background: rgba(61, 99, 245, 0.16);
+  border: 1px solid rgba(61, 99, 245, 0.32);
   color: var(--link);
   font-size: 0.875rem;
   font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .note {
-  margin: 8px 0;
+  margin: 0;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+}
+
+.note code {
+  font-family: "SF Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--code-bg);
+}
+
+.command-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  max-width: 620px;
+  padding: 10px 12px 10px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(61, 99, 245, 0.35);
+  background: var(--code-bg);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .command {
   margin: 0;
   max-width: 100%;
   overflow-x: auto;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: var(--code-bg);
+  padding: 4px 0;
+  background: transparent;
   color: var(--code-ink);
   font-family: "SF Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-  font-size: 0.92rem;
+  font-size: clamp(0.95rem, 2vw, 1.12rem);
+  font-weight: 600;
   line-height: 1.4;
 }
 
@@ -340,23 +400,71 @@ kbd {
   white-space: nowrap;
 }
 
+.copy-button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.copy-button:hover {
+  filter: brightness(1.08);
+}
+
+.copy-button:active {
+  transform: scale(0.97);
+}
+
+.install-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
 .button {
   flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: 42px;
   padding: 0 18px;
   border-radius: 999px;
   background: var(--accent);
   color: #fff;
   text-decoration: none;
   font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .button:hover {
   color: #fff;
   filter: brightness(1.08);
+}
+
+.button-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.button-ghost:hover {
+  color: var(--ink);
+  background: var(--edge);
+  filter: none;
 }
 
 .glass {
@@ -592,9 +700,13 @@ html[data-theme="dark"] .still-dark {
   }
 
   .install-card {
+    padding: 20px 16px;
+  }
+
+  .command-box {
     flex-direction: column;
     align-items: stretch;
-    padding: 16px;
+    padding: 12px;
   }
 
   .feature-grid,

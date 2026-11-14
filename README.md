@@ -1,5 +1,8 @@
 <p align="center">
-  <a href="https://glassforce-preview.breezy-otter-7121.chatgpt.site/">
+  <a href="https://srikolagani.github.io/glassforce-public/#gh-dark-mode-only">
+    <img src="docs/brand/glassforce-hero.png" alt="Glassforce. Your org, one keystroke away." width="100%" />
+  </a>
+  <a href="https://srikolagani.github.io/glassforce-public/#gh-light-mode-only">
     <img src="docs/brand/glassforce-hero.png" alt="Glassforce. Your org, one keystroke away." width="100%" />
   </a>
 </p>
@@ -10,21 +13,33 @@
   Press <kbd>⌥ Space</kbd> from any app, search your org, and open a record in Lightning.
 </p>
 
+<table align="center">
+  <tr>
+    <td align="center">
+      <strong>Install with Homebrew</strong><br />
+      <code>brew install --cask srikolagani/tap/glassforce</code>
+    </td>
+  </tr>
+</table>
+
 <p align="center">
-  <a href="#install-status"><strong>Build from source ↗</strong></a> &nbsp; · &nbsp;
-  <a href="https://glassforce-preview.breezy-otter-7121.chatgpt.site/">Visit the website</a> &nbsp; · &nbsp;
+  <a href="https://github.com/srikolagani/glassforce-public/releases/latest"><strong>Download for Mac ↗</strong></a> &nbsp; · &nbsp;
+  <a href="#install-status"><strong>Install with Homebrew</strong></a> &nbsp; · &nbsp;
+  <a href="https://srikolagani.github.io/glassforce-public/">Visit the website</a> &nbsp; · &nbsp;
   <a href="ARCHITECTURE.md">Read the architecture</a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/macOS-26-3D63F5?style=flat-square&amp;labelColor=070B2E" alt="Requires macOS 26" />
-  <img src="https://img.shields.io/badge/Swift-6.2-3D63F5?style=flat-square&amp;labelColor=070B2E" alt="Swift 6.2" />
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-3D63F5?style=flat-square&amp;labelColor=070B2E" alt="MIT license" /></a>
-  <a href="#install-status"><img src="https://img.shields.io/badge/status-source_candidate-7B4DFF?style=flat-square&amp;labelColor=070B2E" alt="Status: source release candidate" /></a>
+  <sub>macOS 26 Tahoe (Apple silicon &amp; Intel) · Swift 6.2 · Free and open source · OAuth 2.0 + PKCE</sub>
 </p>
 
 <p align="center">
-  <sub>No published download or Homebrew tap yet. This is a source release candidate, not a supported binary release.</sub>
+  <a href="https://github.com/srikolagani/glassforce-public/releases/latest"><img src="https://img.shields.io/github/v/release/srikolagani/glassforce-public?style=flat-square&amp;labelColor=070B2E&amp;color=3D63F5&amp;label=release" alt="Latest release" /></a>
+  <a href="https://github.com/srikolagani/glassforce-public"><img src="https://img.shields.io/github/stars/srikolagani/glassforce-public?style=flat-square&amp;labelColor=070B2E&amp;color=3D63F5&amp;logo=github" alt="GitHub stars" /></a>
+  <img src="https://img.shields.io/badge/macOS-26-3D63F5?style=flat-square&amp;labelColor=070B2E" alt="Requires macOS 26" />
+  <img src="https://img.shields.io/badge/Swift-6.2-3D63F5?style=flat-square&amp;labelColor=070B2E" alt="Swift 6.2" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-3D63F5?style=flat-square&amp;labelColor=070B2E" alt="MIT license" /></a>
+  <a href="#install-status"><img src="https://img.shields.io/badge/homebrew-srikolagani%2Ftap-7B4DFF?style=flat-square&amp;labelColor=070B2E" alt="Homebrew: srikolagani/tap" /></a>
 </p>
 
 <br />
@@ -87,6 +102,53 @@ To move a window, drag the search icon in the command bar or the top edge of the
 
 <br />
 
+<a name="benchmarks"></a>
+<h2 align="center">Measured, not promised.</h2>
+
+<p align="center">We benchmark search latency across 10,000 synthetic Salesforce records and run 213 automated checks on every build.</p>
+
+<table align="center">
+  <tr>
+    <td align="center" valign="top" width="25%"><h1>1.14 ms</h1><strong>median search (p50)</strong><br /><sub>10,000 synthetic records</sub></td>
+    <td align="center" valign="top" width="25%"><h1>2.07 ms</h1><strong>95th percentile (p95)</strong><br /><sub>321 benchmark queries</sub></td>
+    <td align="center" valign="top" width="25%"><h1>213</h1><strong>automated tests</strong><br /><sub>39 suites passing</sub></td>
+    <td align="center" valign="top" width="25%"><h1>0</h1><strong>unconfirmed writes</strong><br /><sub>every write requires Confirm</sub></td>
+  </tr>
+</table>
+
+<p align="center">
+  <a href="docs/how-to-test.md">How we measured this</a> · <a href="#verification-and-packaging">Run the benchmarks yourself</a><br />
+  <sub>Release build on Apple Silicon over 10,000 synthetic records. Local benchmark results, not a network guarantee.</sub>
+</p>
+
+<br />
+
+<a name="under-the-hood"></a>
+<h2 align="center">Under the hood.</h2>
+
+<p align="center">One native macOS process, a local SQLite FTS5 index, and direct HTTPS connections to your Salesforce org.</p>
+
+```mermaid
+flowchart TB
+  you(["You<br/>⌥ Space · keyboard · mouse"]):::blue
+  app["Glassforce.app<br/>SwiftUI Liquid Glass · AppSession<br/>FuzzyMatcher · WriteCommand"]:::blue
+  you --> app
+  app --> fts[("SQLite FTS5<br/>local record cache")]
+  app --> kc["macOS Keychain<br/>device-only refresh token"]
+  app -- "OAuth 2.0 + PKCE<br/>validated org host" --> sf["Your Salesforce Org<br/>Lightning REST API"]
+  classDef blue fill:#3D63F5,stroke:#070B2E,color:#FFFFFF
+```
+
+- **Destination-bound credentials.** Refresh tokens live in this device's macOS Keychain, not iCloud Keychain. Access tokens stay in memory and are restricted to the bound org's validated Salesforce host and identity endpoint.
+- **Conditional stage updates.** Before sending a `PATCH`, Glassforce re-reads the live field and `LastModifiedDate` and attaches `If-Unmodified-Since`. Stale values or conflicts cancel the write and ask for a fresh confirmation.
+- **Built with** Swift 6.2, SwiftUI with macOS 26 Liquid Glass, AppKit `NSPanel`, Carbon `RegisterEventHotKey`, SQLite FTS5, and `ASWebAuthenticationSession`.
+
+<p align="center">
+  <a href="ARCHITECTURE.md">Architecture</a> · <a href="SECURITY.md">Security model</a> · <a href="docs/how-to-test.md">Test guide</a>
+</p>
+
+<br />
+
 <a name="privacy"></a>
 <h2 align="center">Your Mac. Your org. A clear connection.</h2>
 
@@ -103,28 +165,71 @@ To move a window, drag the search icon in the command bar or the top edge of the
 
 <br />
 
+<a name="straight-answers"></a>
+<h2 align="center">Straight answers.</h2>
+
+<details>
+<summary><strong>What does it cost?</strong></summary>
+<br />
+
+Glassforce is free and open source under the [MIT License](LICENSE). You connect it to your own Salesforce org.
+
+</details>
+
+<details>
+<summary><strong>Where does my Salesforce data go?</strong></summary>
+<br />
+
+Synced record fields stay on your Mac under `~/Library/Application Support/Glassforce` in SQLite and JSON so search stays under a few milliseconds. Refresh tokens stay in your macOS login Keychain (`kSecAttrSynchronizable = false`). Glassforce has no backend server and sends no telemetry.
+
+</details>
+
+<details>
+<summary><strong>Can it change records in my org without asking?</strong></summary>
+<br />
+
+No. Sync and search are read-only. The only supported write is an opportunity stage update, which previews the exact before-and-after values in the panel and sends the `PATCH` only after you click **Confirm**.
+
+</details>
+
+<details>
+<summary><strong>Why does macOS ask to approve the app on first launch?</strong></summary>
+<br />
+
+Candidate builds are **ad-hoc signed** unless built with a Developer ID certificate and notarization profile. Leave Gatekeeper and quarantine enabled, and approve the app in **System Settings → Privacy & Security → Open Anyway** if prompted.
+
+</details>
+
+<br />
+
 <a name="install-status"></a>
-<h2 align="center">Build Glassforce.</h2>
+<h2 align="center">Get Glassforce.</h2>
 
 <p align="center">
-  The source is here. The public download is not ready yet.<br />
-  Build locally on <strong>macOS 26</strong> with <strong>Xcode 26</strong> or the <strong>Swift 6.2 Command Line Tools</strong>.
+  Install via the personal Homebrew tap, or build directly from source on <strong>macOS 26</strong>.
 </p>
 
 ```sh
-git clone --branch release/readiness-20261111 https://github.com/srikolagani/glassforce-public.git
+brew tap srikolagani/tap
+brew install --cask srikolagani/tap/glassforce
+```
+
+Candidate builds are **ad-hoc signed** unless a Developer ID signature and notarization profile are supplied at packaging time. macOS may require approval in **System Settings → Privacy & Security → Open Anyway**. Leave Gatekeeper and quarantine enabled.
+
+<details>
+<summary><strong>Build from source</strong></summary>
+<br />
+
+Build locally on **macOS 26** with **Xcode 26** or the **Swift 6.2 Command Line Tools**:
+
+```sh
+git clone https://github.com/srikolagani/glassforce-public.git
 cd glassforce-public
 GLASSFORCE_SIGN_IDENTITY=- scripts/build-app.sh release
 open build/Glassforce.app
 ```
 
 The first build can take a few minutes. This command builds an **ad-hoc signed app** without creating a certificate, changing Keychain settings, or replacing an installed app. It does not imply a Developer ID signature or notarization.
-
-macOS may require approval in **System Settings → Privacy & Security → Open Anyway**. Leave Gatekeeper and quarantine enabled.
-
-<details>
-<summary><strong>If SwiftPM rejects the manifest</strong></summary>
-<br />
 
 If SwiftPM reports `reference to member 'v26'` or `undefined symbol Package.__allocating_init`, the Command Line Tools may have stale private interface files. Reinstall the tools, or use a cleaned copy without changing the installed toolchain:
 
@@ -168,12 +273,11 @@ GLASSFORCE_SIGN_IDENTITY=- scripts/build-app.sh release
 
 ```sh
 scripts/test.sh
+scripts/bench.sh
 scripts/release.sh
 ```
 
-Release packaging requires a **clean Git checkout**. It produces an ad-hoc signed DMG, checksums, and generated casks in `build/release` without publishing or changing tracked source. The DMG has an Applications shortcut; drag Glassforce into Applications to install. Generated casks are not a published Homebrew tap.
-
-Before public distribution, verify the packaged app on a clean Mac and complete an authorized Salesforce sandbox sign-in and sync. Any test update needs approval for the record and exact change. No Developer ID signature or notarization is implied.
+Release packaging requires a **clean Git checkout**. It produces an ad-hoc signed DMG, checksums, and generated casks in `build/release` without publishing or changing tracked source. The DMG has an Applications shortcut; drag Glassforce into Applications to install.
 
 See the [release-candidate test guide](docs/how-to-test.md) for automated checks, an isolated panel smoke test, installer checks, and manual acceptance.
 
@@ -185,6 +289,7 @@ See the [release-candidate test guide](docs/how-to-test.md) for automated checks
 
 <br />
 
+<a name="build-with-us"></a>
 <h2 align="center">Build with us.</h2>
 
 <p align="center">

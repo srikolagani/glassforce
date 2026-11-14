@@ -76,13 +76,23 @@
         <h1>Spotlight for Salesforce.</h1>
         <p class="subhead">Your org, one keystroke away.</p>
         <p class="concrete">Press <kbd>Option-Space</kbd>, search the org, and open the record.</p>
-        <div class="install-card glass">
-          <div class="install-copy">
-            <p class="soon">Coming soon</p>
-            <p class="note">This cask is not available yet.</p>
-            <pre class="command"><code>brew install --cask glassforce</code></pre>
+        <div class="install-card glass install-centerpiece" id="homebrew-install">
+          <div class="install-header">
+            <span class="soon"><span class="pulse-dot" aria-hidden="true"></span>Homebrew Installation</span>
+            <span class="install-tag">macOS 26 Tahoe · Apple Silicon &amp; Intel</span>
           </div>
-          <a class="button" href="https://github.com/srikolagani/glassforce-public#install-status">Build from source</a>
+          <p class="install-lead">Install from the personal Homebrew tap in one command:</p>
+          <div class="command-box">
+            <pre class="command"><code id="brew-cmd">brew install --cask srikolagani/tap/glassforce</code></pre>
+            <button type="button" class="copy-button" data-copy-target="brew-cmd" aria-label="Copy Homebrew install command">
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <p class="note">Or after <code>brew tap srikolagani/tap</code>, run <code>brew install --cask glassforce</code>.</p>
+          <div class="install-actions">
+            <a class="button" href="https://github.com/srikolagani/glassforce-public#install-status">Build from source</a>
+            <a class="button button-ghost" href="https://github.com/srikolagani/glassforce-public/releases">View releases</a>
+          </div>
         </div>
       </div>
       <figure class="hero-figure wrap">
