@@ -23,7 +23,7 @@
 </table>
 
 <p align="center">
-  <a href="https://srikolagani.github.io/glassforce-public/releases/Glassforce-0.1.0.dmg"><strong>Download for Mac (DMG) ↗</strong></a> &nbsp; · &nbsp;
+  <a href="https://github.com/srikolagani/glassforce-public/releases/download/v0.1.0/Glassforce-0.1.0.dmg"><strong>Download for Mac (DMG) ↗</strong></a> &nbsp; · &nbsp;
   <a href="#install-status"><strong>Install with Homebrew</strong></a> &nbsp; · &nbsp;
   <a href="https://srikolagani.github.io/glassforce-public/">Visit the website</a> &nbsp; · &nbsp;
   <a href="ARCHITECTURE.md">Read the architecture</a>
